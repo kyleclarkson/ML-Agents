@@ -123,5 +123,35 @@ public class Bouncer_Agent : Agent {
     //TODO 
     private void FixedUpdate() {
         
+        // Cast ray from position to downwards of length .51, check if ray intersects with collider and Jump can happen.
+        if (Physics.Raycast(transform.position, new Vector3(0f, -1f, 0f), 0.51f) && m_JumpCoolDown <= 0) {
+            RequestDecision();
+            m_JumpsLeft -= 1;
+            m_JumpCoolDown = 0.1f;
+            m_Rigidbody.velocity = default(Vector3);
+        }
+
+        m_JumpCoolDown -= Time.fixedDeltaTime;
+
+        // Agent has fallen off of platform; finish.
+        if (gameObject.transform.position.y < -1) {
+            AddReward(-1);
+            Done();
+            return;
+        }
+
+        // Agent leaves boundaries of platform.
+        if (gameObject.transform.localPosition.x < -19 || gameObject.transform.localPosition.x > 19
+            || gameObject.transform.localPosition.z < -19 || gameObject.transform.localPosition.z > 19) {
+            AddReward(-1);
+            Done();
+            return;
+        }
+
+        // Finish if target is not found after allotted jumps.
+        if (m_JumpsLeft == 0) {
+            Done();
+        }
+
     }
 }

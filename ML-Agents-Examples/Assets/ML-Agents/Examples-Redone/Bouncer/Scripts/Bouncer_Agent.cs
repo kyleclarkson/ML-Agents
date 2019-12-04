@@ -43,7 +43,7 @@ public class Bouncer_Agent : Agent {
         // Position of agent.
         AddVectorObs(gameObject.transform.localPosition);
         // Position of target. 
-        AddVectorObs(target.transform.position);
+        AddVectorObs(target.transform.localPosition);
     }
 
 
@@ -51,7 +51,7 @@ public class Bouncer_Agent : Agent {
         
         // Ensure action-values are clamped to [-1,1]
         for (var i=0; i<vectorAction.Length; i++) {
-            vectorAction[i] = Mathf.Clamp(vectorAction[i], -1, 1);
+            vectorAction[i] = Mathf.Clamp(vectorAction[i], -1f, 1f);
         }
 
         // Get horizontal, jump, and vertical action-values.
@@ -119,12 +119,11 @@ public class Bouncer_Agent : Agent {
                 Time.deltaTime * 10f);
         }
     }
-
-    //TODO 
+    
     private void FixedUpdate() {
         
         // Cast ray from position to downwards of length .51, check if ray intersects with collider and Jump can happen.
-        if (Physics.Raycast(transform.position, new Vector3(0f, -1f, 0f), 0.51f) && m_JumpCoolDown <= 0) {
+        if (Physics.Raycast(transform.position, new Vector3(0f, -1f, 0f), 0.51f) && m_JumpCoolDown <= 0f) {
             RequestDecision();
             m_JumpsLeft -= 1;
             m_JumpCoolDown = 0.1f;
@@ -152,6 +151,5 @@ public class Bouncer_Agent : Agent {
         if (m_JumpsLeft == 0) {
             Done();
         }
-
     }
 }

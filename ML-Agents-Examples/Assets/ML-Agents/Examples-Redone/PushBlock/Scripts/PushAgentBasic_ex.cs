@@ -24,6 +24,8 @@ public class PushAgentBasic_ex : Agent {
     [HideInInspector]
     public GoalDetect_ex goalDetect;
 
+    public bool usingVectorObs;
+
     // Used to change ground material given success or failure of agent.
     Renderer m_GroundRenderer;
     Material m_GroundMaterial;
@@ -59,18 +61,80 @@ public class PushAgentBasic_ex : Agent {
     }
 
     public override float[] Heuristic() {
-        return base.Heuristic();
+        if (Input.GetKey(KeyCode.D)) {
+            return new float[] { 3 };
+        }
+        if (Input.GetKey(KeyCode.W)) {
+            return new float[] { 1 };
+        }
+        if (Input.GetKey(KeyCode.A)) {
+            return new float[] { 4 };
+        }
+        if (Input.GetKey(KeyCode.S)) {
+            return new float[] { 2 };
+        }
+        return new float[] { 0 };
     }
 
     public override void CollectObservations() {
-        base.CollectObservations();
+
+        if (usingVectorObs) {
+            var rayDistance = 12;
+
+            // Last two arguments start/end offests. 
+            AddVectorObs(m_RayPerception.Perceive(rayDistance, m_RayAngles, m_DectableObjects, 0f, 0f));
+            AddVectorObs(m_RayPerception.Perceive(rayDistance, m_RayAngles, m_DectableObjects, 1.5f, 0f));
+        }
     }
 
     public override void AgentAction(float[] vectorAction, string textAction) {
-        base.AgentAction(vectorAction, textAction);
+
+        // Move agent
+        MoveAgent(vectorAction);
+
+        AddReward(-1f / agentParameters.maxStep);
     }
 
     public void SetResetParameters() {
         // TODO 
+    }
+
+    /// <summary>
+    /// Rotate and move the agent.
+    /// </summary>
+    /// <param name="actionVector"></param>
+    private void MoveAgent(float[] actionVector) {
+        var directionToMove = Vector3.zero;
+        var rotateDirection = Vector3.zero;
+        var action = Mathf.FloorToInt(actionVector[0]);
+
+        switch (action) {
+            // Forward
+            case 1:
+                directionToMove = transform.forward * 1f;
+                break;
+            // Backward
+            case 2:
+                directionToMove = transform.forward * -1f;
+                break;
+            // 
+            case 3:
+                rotateDirection = transform.up * 1f;
+                break;
+            case 4:
+                rotateDirection = transform.up * -1f;
+                break;
+            case 5:
+                directionToMove = transform.right * -0.75f;
+                break;
+            case 6:
+                directionToMove = transform.right * 0.75f;
+                break;
+        }
+
+        // Rotate agent over time.
+        transform.Rotate(rotateDirection, Time.fixedDeltaTime * 200f);
+        // Move agent.
+        m_AgentRb.AddForce(directionToMove * m_Academy.agentRunSpeed, ForceMode.VelocityChange);
     }
 }

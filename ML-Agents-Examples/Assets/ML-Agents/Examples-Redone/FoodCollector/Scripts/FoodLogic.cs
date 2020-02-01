@@ -1,18 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FoodLogic : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public bool respawn;
+    public FoodCollectorArea myArea;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void OnEaten() {
+
+        // Food item is to respawn
+        if(respawn) {
+            transform.position = new Vector3(
+                Random.Range(-myArea.range, myArea.range), 
+                3f,
+                Random.Range(-myArea.range, myArea.range))
+                + myArea.transform.position;
+        } else {
+            Destroy(gameObject);
+        }
     }
 }

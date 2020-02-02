@@ -52,14 +52,38 @@ public class FoodCollectorAgent : Agent {
     }
 
     public override void AgentOnDone() {
-        base.AgentOnDone();
+        // Override
     }
 
     public override void AgentReset() {
         base.AgentReset();
     }
 
-    // === ===
+    // === Util methods ===
+
+    private void OnCollisionEnter(Collision collision) {
+        if(collision.gameObject.CompareTag("food")) {
+            Satiate();
+            collision.gameObject.GetComponent<FoodLogic>().OnEaten();
+            // Add reward.
+            AddReward(1f);
+            if( contribute) {
+                m_MyAcademy.totalScore += 1;
+            }
+        }
+
+        if(collision.gameObject.CompareTag("badFood")) {
+            Poison();
+            collision.gameObject.GetComponent<FoodLogic>().OnEaten();
+
+            AddReward(-1f);
+            if (contribute) {
+                m_MyAcademy.totalScore -= 1;
+            }
+        }
+    }
+
+
     public void SetResetParams() {
         SetLaserLengths();
         SetAgentScale();
@@ -81,5 +105,26 @@ public class FoodCollectorAgent : Agent {
         gameObject.transform.localScale = new Vector3(agentScale, agentScale, agentScale);
     }
 
+    
+    // === Private Methods ===
 
+    // Set satiated (full) effect.
+    private void Satiate() {
+        m_Satiated = true;
+        m_EffectTime = Time.time;
+        gameObject.GetComponentInChildren<Renderer>().material = goodMaterial;
+    }
+
+    // Set posioned effect.
+    private void Poison() {
+        m_Poisoned = true;
+        m_EffectTime = Time.time;
+        gameObject.GetComponentInChildren<Renderer>().material = badMaterial;
+    }
+
+    // Set unposioned effect.
+    private void Unpoison() {
+        m_Poisoned = false;
+        gameObject.GetComponentInChildren<Renderer>().material = normalMaterial;
+    }
 }

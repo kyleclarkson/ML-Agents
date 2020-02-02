@@ -115,6 +115,12 @@ public class FoodCollectorAgent : Agent {
         gameObject.GetComponentInChildren<Renderer>().material = goodMaterial;
     }
 
+    // Set unstatiate (hungry) effect.
+    private void Unsatiate() {
+        m_Satiated = false;
+        gameObject.GetComponentInChildren<Renderer>().material = normalMaterial;
+    }
+
     // Set posioned effect.
     private void Poison() {
         m_Poisoned = true;
@@ -125,6 +131,23 @@ public class FoodCollectorAgent : Agent {
     // Set unposioned effect.
     private void Unpoison() {
         m_Poisoned = false;
+        gameObject.GetComponentInChildren<Renderer>().material = normalMaterial;
+    }
+
+    // Set frozen effect.
+    private void Freeze() {
+        // Tag agent as frozen. 
+        gameObject.tag = "frozenAgent";
+        m_Frozen = true;
+        m_FrozenTime = Time.time;
+        gameObject.GetComponentInChildren<Renderer>().material = frozenMaterial;
+    }
+
+    // Set unfrozen effect.
+    private void Unfreeze() {
+        // Untag agent as frozen.
+        gameObject.tag = "agent";
+        m_Frozen = false;
         gameObject.GetComponentInChildren<Renderer>().material = normalMaterial;
     }
 }

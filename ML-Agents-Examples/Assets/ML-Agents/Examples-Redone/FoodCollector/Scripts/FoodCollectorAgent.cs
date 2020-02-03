@@ -44,11 +44,37 @@ public class FoodCollectorAgent : Agent {
     }
 
     public override void CollectObservations() {
-        base.CollectObservations();
+        if (useVectorObs) {
+            const float rayDistance = 50f;
+            float[] rayAnlges = {20f, 45f, 70f, 90f, 110f, 135f, 160f};
+
+            string[] dectableObjects = {"food", "agent", "wall", "badFood", "frozenAgent"};
+            AddVectorObs(m_RayPer.Perceive(
+                rayDistance: rayDistance,               // distance to object   -> 1 value
+                rayAngles: rayAnlges,                   // ray angles           -> 7 mutlipiers
+                detectableObjects: dectableObjects,     // objects to detect    -> 5 values
+                startOffset: 0f,                
+                endOffset: 0f));
+
+            // Total values = 36 = (1+5) * 6 ray angles TODO check. 
+
+            var localVelocity = transform.InverseTransformDirection(m_AgentRb.velocity);
+
+            // float -> 1 value
+            AddVectorObs(localVelocity.x);
+            // float -> 1 value
+            AddVectorObs(localVelocity.z);
+            // int -> 1 value
+            AddVectorObs(System.Convert.ToInt32(m_Frozen));
+            // int -> 1 value
+            AddVectorObs(System.Convert.ToInt32(m_Shoot));
+
+            // Total overal values = 40 values. 
+        }
     }
 
     public override void AgentAction(float[] vectorAction, string textAction) {
-        base.AgentAction(vectorAction, textAction);
+        MoveAgent(vectorAction);
     }
 
     public override void AgentOnDone() {
@@ -56,10 +82,13 @@ public class FoodCollectorAgent : Agent {
     }
 
     public override void AgentReset() {
-        base.AgentReset();
+        // TODO
     }
 
     // === Util methods ===
+    public void MoveAgent(float[] act) {
+        // TODO 
+    }
 
     private void OnCollisionEnter(Collision collision) {
         if(collision.gameObject.CompareTag("food")) {
@@ -88,17 +117,14 @@ public class FoodCollectorAgent : Agent {
         SetLaserLengths();
         SetAgentScale();
     }
-
-    /// <summary>
+    
     /// Set laser length using default value or from specified academy params.
-    /// </summary>
     public void SetLaserLengths() {
         m_LaserLength = m_MyAcademy.resetParameters.TryGetValue("laser_length", out m_LaserLength) ? m_LaserLength : 1.0f;
     }
+    
 
-    /// <summary>
     /// Set scale of agent using default value or from specified academy params. 
-    /// </summary>
     public void SetAgentScale() {
         float agentScale;
         agentScale = m_MyAcademy.resetParameters.TryGetValue("agent_scale", out agentScale) ? agentScale : 1.0f;
@@ -149,5 +175,13 @@ public class FoodCollectorAgent : Agent {
         gameObject.tag = "agent";
         m_Frozen = false;
         gameObject.GetComponentInChildren<Renderer>().material = normalMaterial;
+    }
+
+    
+    private Color32 ToColor(int hexVal) {
+        var r = (byte)((hexVal >> 16) & 0xFF);
+        var g = (byte)((hexVal >> 8) & 0xFF);
+        var b = (byte)(hexVal & 0xFF);
+        return new Color32(r, g, b, 255);
     }
 }

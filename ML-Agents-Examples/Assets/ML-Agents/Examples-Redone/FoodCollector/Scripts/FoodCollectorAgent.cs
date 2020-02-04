@@ -82,12 +82,78 @@ public class FoodCollectorAgent : Agent {
     }
 
     public override void AgentReset() {
-        // TODO
+        Unfreeze();
+        Unpoison();
+        Unsatiate();
+
+        m_Shoot = false;
+        m_AgentRb.velocity = Vector3.zero;
+        // Set laser in scene relative to agent. 
+        myLaser.transform.localScale = new Vector3(
+            Random.Range(-m_MyArea.range, m_MyArea.range),
+            2f,
+            Random.Range(-m_MyArea.range, m_MyArea.range)) + area.transform.position;
+
+        transform.rotation = Quaternion.Euler(new Vector3(0f, Random.Range(0, 360)));
+
+        SetResetParams();
     }
 
     // === Util methods ===
     public void MoveAgent(float[] act) {
-        // TODO 
+
+        m_Shoot = false;
+
+        // Unfreeze after 4 seconds.
+        if(Time.time > m_FrozenTime + 4f && m_Frozen) {
+            Unfreeze();
+        }
+
+        // New effect can occur after 0.5 seconds.
+        if (Time.time > m_EffectTime + 0.5) {
+            if(m_Poisoned) {
+                Unpoison();
+            }
+            if(m_Satiated) {
+                Unsatiate();
+            }
+        }
+
+        var directionToGo = Vector3.zero;
+        var rotateDir = Vector3.zero;
+
+        if(!m_Frozen) {
+            var shootCommand = false;
+            var forwardAxis = (int)act[0];
+            var rightAxis = (int)act[1];
+            var rotateAxis = (int)act[2];
+            var shootAxis = (int)act[3];
+
+            // TODO add switch cases to handle actions. 
+
+        // Slow down agent
+        if (m_AgentRb.velocity.sqrMagnitude > 25f) {
+                m_AgentRb.velocity *= 0.95f;            }
+        }
+
+        // Agent shoots laser
+        if(m_Shoot) {
+            var myTransform = transform;
+
+            myLaser.transform.localScale = new Vector3(1f, 1f, m_LaserLength);
+            var target = myTransform.TransformDirection(RayPerception3D.PolarToCartesian(25f, 90f));
+
+            Debug.DrawRay(myTransform.position, target, Color.red, 0f, true);
+            // The object hit. 
+            RaycastHit hit;
+            if (Physics.SphereCast(transform.position, 2f, target, out hit, 25f)) {
+                if (hit.collider.gameObject.CompareTag("agent")) {
+                    hit.collider.gameObject.GetComponent<FoodCollectorAgent>().Freeze();
+                }
+            }
+        } else {
+            myLaser.transform.localScale = new Vector3(0f, 0f, 0f);
+        }
     }
 
     private void OnCollisionEnter(Collision collision) {

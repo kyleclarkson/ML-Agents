@@ -56,8 +56,8 @@ public class FoodCollectorAgent : Agent {
                 startOffset: 0f,                
                 endOffset: 0f));
 
-            // Total values = 36 = (1+5) * 6 ray angles TODO check. 
-
+            // Total values = 49 = (5 detectables object + 1 hit/not + 1 distance to object) * 7 ray angles. 
+            
             var localVelocity = transform.InverseTransformDirection(m_AgentRb.velocity);
 
             // float -> 1 value
@@ -69,7 +69,7 @@ public class FoodCollectorAgent : Agent {
             // int -> 1 value
             AddVectorObs(System.Convert.ToInt32(m_Shoot));
 
-            // Total overal values = 40 values. 
+            // Total overal values = 53 values. 
         }
     }
 
@@ -120,7 +120,7 @@ public class FoodCollectorAgent : Agent {
         }
 
         var directionToGo = Vector3.zero;
-        var rotateDir = Vector3.zero;
+        var rotateDirection = Vector3.zero;
 
         if(!m_Frozen) {
             var shootCommand = false;
@@ -129,11 +129,45 @@ public class FoodCollectorAgent : Agent {
             var rotateAxis = (int)act[2];
             var shootAxis = (int)act[3];
 
-            // TODO add switch cases to handle actions. 
+            // Handle way in which agent should move (forward/backward, rotation) and shoot action.
+            switch(forwardAxis) {
+                case 1:
+                    directionToGo = transform.forward;
+                    break;
+                case 2:
+                    directionToGo = -transform.forward;
+                    break;
+            }
 
+            switch (rightAxis) {
+                case 1:
+                    rotateDirection = -transform.up;
+                    break;
+                case 2:
+                    rotateDirection = transform.up;
+                    break;
+            }
+
+            switch (shootAxis) {
+                case 1:
+                    shootCommand = true;
+                    break;
+            }
+
+            if (shootCommand) {
+                m_Shoot = true;
+                directionToGo *= 0.5f;
+                m_AgentRb.velocity *= 0.75f;
+            }
+
+            m_AgentRb.AddForce(directionToGo * agentMoveSpeed, ForceMode.VelocityChange);
+            transform.Rotate(rotateDirection, Time.fixedDeltaTime * agentTurnSpeed);
+
+                
         // Slow down agent
         if (m_AgentRb.velocity.sqrMagnitude > 25f) {
-                m_AgentRb.velocity *= 0.95f;            }
+                m_AgentRb.velocity *= 0.95f;
+            }
         }
 
         // Agent shoots laser
@@ -146,6 +180,7 @@ public class FoodCollectorAgent : Agent {
             Debug.DrawRay(myTransform.position, target, Color.red, 0f, true);
             // The object hit. 
             RaycastHit hit;
+
             if (Physics.SphereCast(transform.position, 2f, target, out hit, 25f)) {
                 if (hit.collider.gameObject.CompareTag("agent")) {
                     hit.collider.gameObject.GetComponent<FoodCollectorAgent>().Freeze();
@@ -242,7 +277,6 @@ public class FoodCollectorAgent : Agent {
         m_Frozen = false;
         gameObject.GetComponentInChildren<Renderer>().material = normalMaterial;
     }
-
     
     private Color32 ToColor(int hexVal) {
         var r = (byte)((hexVal >> 16) & 0xFF);

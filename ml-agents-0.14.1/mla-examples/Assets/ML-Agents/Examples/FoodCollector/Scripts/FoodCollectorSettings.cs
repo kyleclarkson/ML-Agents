@@ -3,46 +3,43 @@ using UnityEngine;
 using UnityEngine.UI;
 using MLAgents;
 
-public class FoodCollectorSettings : MonoBehaviour
-{
-    [HideInInspector]
-    public GameObject[] agents;
-    [HideInInspector]
-    public FoodCollectorArea[] listArea;
+namespace Examples {
+    public class FoodCollectorSettings : MonoBehaviour {
 
-    public int totalScore;
-    public Text scoreText;
+        [HideInInspector]
+        public GameObject agent;
+        [HideInInspector]
+        public FoodCollectorArea[] listArea;
 
-    public void Awake()
-    {
-        Academy.Instance.OnEnvironmentReset += EnvironmentReset;
-    }
+        public int totalScore;
+        public Text scoreText;
 
-    public void EnvironmentReset()
-    {
-        ClearObjects(GameObject.FindGameObjectsWithTag("food"));
-        ClearObjects(GameObject.FindGameObjectsWithTag("badFood"));
-
-        agents = GameObject.FindGameObjectsWithTag("agent");
-        listArea = FindObjectsOfType<FoodCollectorArea>();
-        foreach (var fa in listArea)
-        {
-            fa.ResetFoodArea(agents);
+        public void Awake() {
+            Academy.Instance.OnEnvironmentReset += EnvironmentReset;
         }
 
-        totalScore = 0;
-    }
+        public void EnvironmentReset() {
+            ClearObjects(GameObject.FindGameObjectsWithTag("food"));
+            ClearObjects(GameObject.FindGameObjectsWithTag("badFood"));
 
-    void ClearObjects(GameObject[] objects)
-    {
-        foreach (var food in objects)
-        {
-            Destroy(food);
+            agent = GameObject.FindGameObjectWithTag("agent");
+            listArea = FindObjectsOfType<FoodCollectorArea>();
+
+            foreach (var foodArea in listArea) {
+                foodArea.ResetFoodArea(agent);
+            }
+
+            totalScore = 0;
         }
-    }
 
-    public void Update()
-    {
-        scoreText.text = $"Score: {totalScore}";
+        void ClearObjects(GameObject[] objects) {
+            foreach (var food in objects) {
+                Destroy(food);
+            }
+        }
+
+        public void Update() {
+            scoreText.text = $"Score: {totalScore}";
+        }
     }
 }

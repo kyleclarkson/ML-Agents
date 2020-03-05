@@ -34,9 +34,26 @@ namespace Examples {
             }
         }
 
-
+        /// <summary>
+        /// Set up environment using with agent. Note in example,
+        /// a list of agents is passed. 
+        /// </summary>
+        /// <param name="agent"></param>
         public void ResetFoodArea(GameObject agent) {
-            // TODO
+            // Set new position for agent
+            if (agent.transform.parent == gameObject.transform) {
+                agent.transform.position = new Vector3(
+                    Random.Range(-range, range),
+                    2f,
+                    Random.Range(-range, range)) + transform.position;
+
+                agent.transform.rotation = Quaternion.Euler(new Vector3(
+                    0f, Random.Range(0, 360)));
+
+            }
+
+            CreateFood(numFood, food);
+            CreateFood(numFood, badFood);
         }
 
         public override void ResetArea() {

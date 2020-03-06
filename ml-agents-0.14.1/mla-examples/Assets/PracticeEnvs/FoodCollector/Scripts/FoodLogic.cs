@@ -14,9 +14,9 @@ namespace Examples {
             // Food item will either respawn or not. 
             if (respawn) {
                 transform.position = new Vector3(
-                    Random.RandomRange(-myArea.range, myArea.range),
+                    Random.Range(-myArea.range, myArea.range),
                     3f,
-                    Random.RandomRange(-myArea.range, myArea.range) + myArea.transform.position;
+                    Random.Range(-myArea.range, myArea.range)) + myArea.transform.position;
             } else {
                 Destroy(gameObject);
             }

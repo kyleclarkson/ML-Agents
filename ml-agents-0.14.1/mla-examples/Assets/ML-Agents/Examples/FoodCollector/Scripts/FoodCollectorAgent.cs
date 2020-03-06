@@ -40,7 +40,7 @@ namespace Examples {
             m_AgentRb = GetComponent<Rigidbody>();
             Monitor.verticalOffset = 1f;
             m_MyArea = area.GetComponent<FoodCollectorArea>();
-            m_FoodCollecterSettings = FindObjectOfType<FoodCollectorSettings>();
+            m_FoodCollecterSettings = FindObjectOfType <Examples.FoodCollectorSettings>();
 
             SetResetParameters();
         }
@@ -137,19 +137,90 @@ namespace Examples {
             var rotateDir = Vector3.zero;
 
             if (!m_Frozen) {
-                // TODO
+                // Agent can move. Determine how from action vector.
+
+                var forwardAxis = (int)action[0];
+                var rightAxis = (int)action[1];
+                var rotateAxis = (int)action[2];
+                var shootAxis = (int)action[3];
+                var shootCommand = false;
+
+                switch (forwardAxis) {
+                    // Forward
+                    case 1:
+                        dirToGo = transform.forward;
+                        break;
+                    // Backward
+                    case 2:
+                        dirToGo = -transform.forward;
+                        break;
+                }
+
+                switch (rightAxis) {
+                    // Go left
+                    case 1:
+                        dirToGo = transform.right;
+                        break;
+                    // Go right
+                    case 2:
+                        dirToGo = -transform.right;
+                        break;
+                }
+
+                switch (rotateAxis) {
+                    // Rotate down
+                    case 1:
+                        rotateDir = -transform.up;
+                        break;
+                    // Rotate up
+                    case 2:
+                        rotateDir = transform.up;
+                        break;
+                }
+
+                switch (shootAxis) {
+                    case 1:
+                        shootCommand = true;
+                        break;
+                }
+
+                if (shootCommand) {
+                    // Agent shoots, scale down direction and speed
+                    m_Shoot = true;
+                    dirToGo *= 0.5f;
+                    m_AgentRb.velocity *= 0.75f;
+                }
+
+                // Apply vectors (i.e. force) to agent.
+                m_AgentRb.AddForce(dirToGo * moveSpeed, ForceMode.VelocityChange);
+                transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
+
             }
 
-            // Agent slow down agent.
+            // Slow down agent.
             if (m_AgentRb.velocity.sqrMagnitude > 25f) {
                 m_AgentRb.velocity *= 0.95f;
             }
-
-            // TODO
+            
             if (m_Shoot) {
+                // Get ray
+                var myTransform = transform;
+                myLaser.transform.localScale = new Vector3(1f, 1f, m_LaserLength);
+                var rayDir = 25.0f * myTransform.forward;
+                // Draw ray and determine if it hits an agent.
+                // (Should not occur with single agent)
+                Debug.DrawRay(myTransform.position, rayDir, Color.red, 0f, transform);
+                RaycastHit hit;
+
+                if (Physics.SphereCast(transform.position, 2f, rayDir, out hit, 25f)) {
+                    if (hit.collider.gameObject.CompareTag("agent")) {
+                        // Freeze hit agent. 
+                        hit.collider.gameObject.GetComponent<FoodCollectorAgent>().Freeze();
+                    }
+                }
 
             } else {
-
+                myLaser.transform.localScale = new Vector3(0f, 0f, 0f);
             }
         }
 

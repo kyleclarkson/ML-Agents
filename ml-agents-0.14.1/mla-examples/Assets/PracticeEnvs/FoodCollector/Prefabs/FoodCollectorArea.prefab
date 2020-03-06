@@ -184,10 +184,10 @@ GameObject:
   - component: {fileID: 7627638497216917359}
   - component: {fileID: 4059419918903599549}
   - component: {fileID: 5209248588137308114}
-  - component: {fileID: 8451224042983464258}
-  - component: {fileID: 5596508272387363668}
   - component: {fileID: 5859536192653354287}
   - component: {fileID: 8216722449632201856}
+  - component: {fileID: 8451224042983464258}
+  - component: {fileID: 5596508272387363668}
   m_Layer: 0
   m_Name: Agent
   m_TagString: agent
@@ -238,8 +238,58 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &5859536192653354287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3367113169991625770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BrainParameters:
+    vectorObservationSize: 4
+    numStackedVectorObservations: 1
+    vectorActionSize: 03000000030000000300000002000000
+    vectorActionDescriptions: []
+    vectorActionSpaceType: 0
+  m_Model: {fileID: 0}
+  m_InferenceDevice: 0
+  m_BehaviorType: 0
+  m_BehaviorName: FoodCollector
+  m_TeamID: 0
+  m_UseChildSensors: 1
+--- !u!114 &8216722449632201856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3367113169991625770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c66e6845309d241c78a6d77ee2567928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  maxStep: 5000
+  area: {fileID: 5312161435055351519}
+  turnSpeed: 300
+  moveSpeed: 2
+  normalMaterial: {fileID: 2100000, guid: c9fa44c2c3f8ce74ca39a3355ea42631, type: 2}
+  badMaterial: {fileID: 2100000, guid: 88b9ae7af2c1748a0a1f63407587a601, type: 2}
+  goodMaterial: {fileID: 2100000, guid: c67450f290f3e4897bc40276a619e78d, type: 2}
+  frozenMaterial: {fileID: 2100000, guid: 66163cf35956a4be08e801b750c26f33, type: 2}
+  myLaser: {fileID: 6450794809793750836}
+  contribute: 0
+  useVectorObs: 1
 --- !u!114 &8451224042983464258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,7 +303,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensorName: RayPerceptionSensor
-  detectableTags: []
+  detectableTags:
+  - food
+  - agent
+  - wall
+  - badFood
+  - frozenAgent
   raysPerDirection: 3
   maxRayDegrees: 70
   sphereCastRadius: 0.5
@@ -282,56 +337,6 @@ MonoBehaviour:
   DecisionPeriod: 5
   RepeatAction: 1
   offsetStep: 0
---- !u!114 &5859536192653354287
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3367113169991625770}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BrainParameters:
-    vectorObservationSize: 1
-    numStackedVectorObservations: 1
-    vectorActionSize: 01000000
-    vectorActionDescriptions: []
-    vectorActionSpaceType: 0
-  m_Model: {fileID: 0}
-  m_InferenceDevice: 0
-  m_BehaviorType: 0
-  m_BehaviorName: My Behavior
-  m_TeamID: 0
-  m_UseChildSensors: 1
---- !u!114 &8216722449632201856
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3367113169991625770}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c66e6845309d241c78a6d77ee2567928, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  agentParameters:
-    maxStep: 0
-  hasUpgradedFromAgentParameters: 1
-  maxStep: 0
-  area: {fileID: 0}
-  turnSpeed: 300
-  moveSpeed: 2
-  normalMaterial: {fileID: 0}
-  badMaterial: {fileID: 0}
-  goodMaterial: {fileID: 0}
-  frozenMaterial: {fileID: 0}
-  myLaser: {fileID: 0}
-  contribute: 0
-  useVectorObs: 0
 --- !u!1 &5312161435055351519
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,6 +346,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5312161435055351516}
+  - component: {fileID: 8896895100534255056}
   m_Layer: 0
   m_Name: FoodCollectorArea
   m_TagString: Untagged
@@ -364,6 +370,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8896895100534255056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5312161435055351519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddeddd3e8bc66dd4abf43becdc86fbf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  food: {fileID: 1699568242032636, guid: 7a4e46e6c55f3a144881ec5fe2550f46, type: 3}
+  badFood: {fileID: 1853821981215314, guid: 7e3a3147c2afc7643805b7175a5c8b58, type: 3}
+  numFood: 25
+  numBadFood: 25
+  respawnFood: 1
+  range: 45
 --- !u!1 &5312161435568725069
 GameObject:
   m_ObjectHideFlags: 0
@@ -375,7 +399,7 @@ GameObject:
   - component: {fileID: 5312161435568725066}
   m_Layer: 0
   m_Name: Court
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -410,7 +434,7 @@ GameObject:
   - component: {fileID: 1309395306792072902}
   m_Layer: 0
   m_Name: Floor
-  m_TagString: Untagged
+  m_TagString: ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -627,7 +651,7 @@ GameObject:
   - component: {fileID: 1426709223018918241}
   m_Layer: 0
   m_Name: WallsOuter
-  m_TagString: Untagged
+  m_TagString: wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

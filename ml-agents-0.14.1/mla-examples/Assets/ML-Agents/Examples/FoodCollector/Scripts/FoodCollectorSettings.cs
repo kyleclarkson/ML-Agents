@@ -14,7 +14,8 @@ namespace Examples {
         public int totalScore;
         public Text scoreText;
 
-        public void Awake() {
+        void Awake() {
+            Debug.Log($"FoodCollectorSettings awake called");
             Academy.Instance.OnEnvironmentReset += EnvironmentReset;
         }
 

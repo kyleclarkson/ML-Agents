@@ -39,9 +39,9 @@ namespace Examples {
 
             m_AgentRb = GetComponent<Rigidbody>();
             Monitor.verticalOffset = 1f;
-            m_MyArea = area.GetComponent<FoodCollectorArea>();
-            m_FoodCollecterSettings = FindObjectOfType <Examples.FoodCollectorSettings>();
-
+            m_MyArea = area.GetComponent<Examples.FoodCollectorArea>();
+            m_FoodCollecterSettings = FindObjectOfType<Examples.FoodCollectorSettings>();
+            
             SetResetParameters();
         }
         public override void CollectObservations() {
@@ -230,7 +230,7 @@ namespace Examples {
             // Collision with food item
             if (collision.gameObject.CompareTag("food")) {
                 Satiate();
-                collision.gameObject.GetComponent<FoodLogic>().OnEaten();
+                collision.gameObject.GetComponent<Examples.FoodLogic>().OnEaten();
 
                 AddReward(1f);
                 if (contribute) {
@@ -241,7 +241,7 @@ namespace Examples {
             // Collision with badFood item
             if (collision.gameObject.CompareTag("badFood")) {
                 Poison();
-                collision.gameObject.GetComponent<FoodLogic>().OnEaten();
+                collision.gameObject.GetComponent<Examples.FoodLogic>().OnEaten();
 
                 AddReward(-1.0f);
                 if (contribute) {

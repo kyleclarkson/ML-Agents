@@ -288,7 +288,7 @@ MonoBehaviour:
   goodMaterial: {fileID: 2100000, guid: c67450f290f3e4897bc40276a619e78d, type: 2}
   frozenMaterial: {fileID: 2100000, guid: 66163cf35956a4be08e801b750c26f33, type: 2}
   myLaser: {fileID: 6450794809793750836}
-  contribute: 0
+  contribute: 1
   useVectorObs: 1
 --- !u!114 &8451224042983464258
 MonoBehaviour:

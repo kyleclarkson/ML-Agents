@@ -24,7 +24,7 @@ namespace Examples {
             ClearObjects(GameObject.FindGameObjectsWithTag("badFood"));
 
             agent = GameObject.FindGameObjectWithTag("agent");
-            listArea = FindObjectsOfType<FoodCollectorArea>();
+            listArea = FindObjectsOfType<Examples.FoodCollectorArea>();
 
             foreach (var foodArea in listArea) {
                 foodArea.ResetFoodArea(agent);

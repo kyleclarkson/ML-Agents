@@ -23,14 +23,16 @@ namespace Examples {
         /// <param name="num">The amount of food to create</param>
         /// <param name="foodItem">The food object to be cloned</param>
         public void CreateFood(int numOfFood, GameObject foodItem) {
-            Debug.Log("$Creating food items");
+            // Debug.Log("$Creating food items");
             for (int i=0; i < numOfFood; i++) {
                 GameObject food = Instantiate(foodItem, new Vector3(
                     Random.Range(-range, range), 1f, Random.Range(-range, range)) + transform.position,
                     Quaternion.Euler(new Vector3(0f, Random.Range(0f,360f), 90f)));
-
-                food.GetComponent<FoodLogic>().respawn = respawnFood;
-                food.GetComponent<FoodLogic>().myArea = this;
+                // Debug.Log($"is null? {food == null}");
+                // Debug.Log($"respawn food value {respawnFood}");
+                // Debug.Log($"Component value is null? {food.GetComponent<Examples.FoodLogic>() == null}");
+                food.GetComponent<Examples.FoodLogic>().respawn = respawnFood;
+                food.GetComponent<Examples.FoodLogic>().myArea = this;
             }
         }
 
@@ -40,7 +42,7 @@ namespace Examples {
         /// </summary>
         /// <param name="agent"></param>
         public void ResetFoodArea(GameObject agent) {
-            Debug.Log($"Called ResetFoodArea");
+            // Debug.Log($"Called ResetFoodArea");
             // Set new position for agent (Note would need for loop and receive array for multiple agents.)
             if (agent.transform.parent == gameObject.transform) {
                 agent.transform.position = new Vector3(

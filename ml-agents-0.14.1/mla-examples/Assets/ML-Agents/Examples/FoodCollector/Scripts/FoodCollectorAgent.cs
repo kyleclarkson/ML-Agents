@@ -7,12 +7,12 @@ namespace Examples {
         FoodCollectorSettings m_FoodCollecterSettings;
         public GameObject area;
         FoodCollectorArea m_MyArea;
-        bool m_Frozen;
-        bool m_Poisoned;
-        bool m_Satiated;
-        bool m_Shoot;
-        float m_FrozenTime;
-        float m_EffectTime;
+        bool m_Frozen;      // if agent is frozen
+        bool m_Poisoned;    // if agent is poisoned
+        bool m_Satiated;    // if agent is fed
+        bool m_Shoot;       // if agent can shoot
+        float m_FrozenTime; // time agent was frozen at
+        float m_EffectTime; // time effect occured (e.g. being feed, poisioned)
 
         Rigidbody m_AgentRb;
         float m_LaserLength;
@@ -30,7 +30,10 @@ namespace Examples {
         public bool contribute;
         public bool useVectorObs;
 
-        // == Override methods ==
+        // ============================
+        // == Agent Override methods ==
+        // ============================
+
         public override void InitializeAgent() {
             base.InitializeAgent();
 
@@ -52,7 +55,23 @@ namespace Examples {
         }
 
         public override void AgentReset() {
-            base.AgentReset();
+            Unfreeze();
+            Unpoison();
+            Unsatiate();
+
+            m_Shoot = false;
+            m_AgentRb.velocity = Vector3.zero;
+
+            myLaser.transform.localScale = new Vector3(0f, 0f, 0f);
+
+            transform.position = new Vector3(
+                Random.Range(-m_MyArea.range, m_MyArea.range),
+                2f,
+                Random.Range(-m_MyArea.range, m_MyArea.range))
+                + area.transform.position;
+            transform.rotation = Quaternion.Euler(new Vector3(0f, Random.Range(0, 360)));
+
+            SetResetParameters();
         }
 
         public override void AgentAction(float[] vectorAction) {
@@ -88,14 +107,129 @@ namespace Examples {
             return action;
         }
 
+        /// <summary>
+        /// Given action vector, apply corresponding actions.
+        /// The 4 axis correspond to:
+        /// 0 - Moving forward/backward
+        /// 1 - Moving left/right
+        /// 2 - Rotating
+        /// 3 - Shooting laser
+        /// </summary>
+        /// <param name="action">A len 4 array</param>
+        public void MoveAgent(float[] action) {
 
-        // == Helper Methods ==
-        public void SetResetParameters() {
-            // TODO 
+            m_Shoot = false;
+
+            // Enough time has passed since being frozen. 
+            if (Time.time > m_FrozenTime + 4f && m_Frozen) {
+                Unfreeze();
+            }
+            if (Time.time > m_EffectTime + 0.5f) {
+                if (m_Poisoned) {
+                    Unpoison();
+                }
+                if (m_Satiated) {
+                    Unsatiate();
+                }
+            }
+
+            var dirToGo = Vector3.zero;
+            var rotateDir = Vector3.zero;
+
+            if (!m_Frozen) {
+                // TODO
+            }
+
+            // Agent slow down agent.
+            if (m_AgentRb.velocity.sqrMagnitude > 25f) {
+                m_AgentRb.velocity *= 0.95f;
+            }
+
+            // TODO
+            if (m_Shoot) {
+
+            } else {
+
+            }
         }
 
-        public void MoveAgent(float[] action) {
-            // TODO
+        // A collision event is detected.
+        private void OnCollisionEnter(Collision collision) {
+
+            // Collision with food item
+            if (collision.gameObject.CompareTag("food")) {
+                Satiate();
+                collision.gameObject.GetComponent<FoodLogic>().OnEaten();
+
+                AddReward(1f);
+                if (contribute) {
+                    m_FoodCollecterSettings.totalScore += 1;
+                }
+            }
+
+            // Collision with badFood item
+            if (collision.gameObject.CompareTag("badFood")) {
+                Poison();
+                collision.gameObject.GetComponent<FoodLogic>().OnEaten();
+
+                AddReward(-1.0f);
+                if (contribute) {
+                    m_FoodCollecterSettings.totalScore -= 1;
+                }
+            }
+        }
+
+        // ====================
+        // == Helper Methods ==
+        // ====================
+
+        void Freeze() {
+            gameObject.tag = "frozenAgent";
+            m_Frozen = true;
+            m_FrozenTime = Time.time;
+            gameObject.GetComponentInChildren<Renderer>().material = frozenMaterial;
+        }
+
+        void Unfreeze() {
+            m_Frozen = false;
+            gameObject.tag = "agent";
+            gameObject.GetComponentInChildren<Renderer>().material = normalMaterial;
+        }
+
+        void Poison() {
+            m_Poisoned = true;
+            m_EffectTime = Time.time;
+            gameObject.GetComponentInChildren<Renderer>().material = badMaterial;
+        }
+
+        void Unpoison() {
+            m_Poisoned = false;
+            gameObject.GetComponentInChildren<Renderer>().material = normalMaterial;
+        }
+
+        void Satiate() {
+            m_Satiated = true;
+            m_EffectTime = Time.time;
+            gameObject.GetComponentInChildren<Renderer>().material = goodMaterial;
+        }
+
+        void Unsatiate() {
+            m_Satiated = false;
+            gameObject.GetComponentInChildren<Renderer>().material = normalMaterial;
+        }
+
+        public void SetResetParameters() {
+            SetLaserLengths();
+            SetAgentScale();
+        }
+
+        public void SetLaserLengths() {
+            m_LaserLength = Academy.Instance.FloatProperties.GetPropertyWithDefault("laser_length", 1.0f);
+        }
+
+        public void SetAgentScale() {
+            float agentScale = Academy.Instance.FloatProperties.GetPropertyWithDefault("agent_scale", 1.0f);
+            gameObject.transform.localScale = new Vector3(agentScale, agentScale, agentScale);
         }
     }
 }

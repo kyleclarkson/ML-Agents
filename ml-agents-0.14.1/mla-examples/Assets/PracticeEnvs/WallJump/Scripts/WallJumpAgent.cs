@@ -79,11 +79,26 @@ namespace Examples {
         }
 
         public override void CollectObservations() {
-            base.CollectObservations();
+            // Agents location relative to ground.
+            var agentPosition = m_AgentRb.position - ground.transform.position;
+
+            AddVectorObs(agentPosition / 20f);
+            AddVectorObs(DoGroundCheck(true) ? 1 : 0);
         }
 
         public override void AgentAction(float[] vectorAction) {
-            base.AgentAction(vectorAction);
+            // Move agent
+            MoveAgent(vectorAction);
+
+            // Jump failed? TODo
+            if ((!Physics.Raycast(m_AgentRb.position, Vector3.down, 20)) ||
+                (!Physics.Raycast(m_ShortBlockRb.position, Vector3.down, 20))) {
+                SetReward(-1f);
+                Done();
+                ResetBlock(m_ShortBlockRb);
+                StartCoroutine(
+                    GoalScoredSwapGroundMaterial(m_WallJumpSettings.goalFailedMaterial, .5f));
+            }
         }
 
         // Reset agent and block's position.
@@ -100,7 +115,56 @@ namespace Examples {
 
 
         public void MoveAgent(float[] action) {
-            // TODO
+            // Apply neg award for not reaching goal.
+            AddReward(-0.0005f);
+
+            var smallGrounded = DoGroundCheck(true);
+            var largeGrounded = DoGroundCheck(false);
+
+            var dirToGo = Vector3.zero;
+            var rotateDir = Vector3.zero;
+
+            // Get actions passed by array.
+            var dirToGoForwardAction = (int)action[0];
+            var rotateDirAction = (int)action[1];
+            var dirToGoSideAction = (int)action[2];
+            var jumpAction = (int)action[3];
+
+            // Applp actions to vector
+            if (dirToGoForwardAction == 1)
+                dirToGo = (largeGrounded ? 1f : 0.5f) * 1f * transform.forward;
+            else if (dirToGoForwardAction == 2)
+                dirToGo = (largeGrounded ? 1f : 0.5f) * -1f * transform.forward;
+            if (rotateDirAction == 1)
+                rotateDir = transform.up * -1f;
+            else if (rotateDirAction == 2)
+                rotateDir = transform.up * 1f;
+            if (dirToGoSideAction == 1)
+                dirToGo = (largeGrounded ? 1f : 0.5f) * -0.6f * transform.right;
+            else if (dirToGoSideAction == 2)
+                dirToGo = (largeGrounded ? 1f : 0.5f) * 0.6f * transform.right;
+            if (jumpAction == 1)
+                if ((jumpingTime <= 0f) && smallGrounded) {
+                    Jump();
+                }
+
+            transform.Rotate(rotateDir, Time.fixedDeltaTime * 300f);
+            m_AgentRb.AddForce(dirToGo * m_WallJumpSettings.agentRunSpeed, ForceMode.VelocityChange);
+
+            if (jumpTime > 0f) {
+                m_JumpTargetPos = new Vector3(
+                    m_AgentRb.position.x,
+                    m_JumpStartingPos.y + m_WallJumpSettings.agentJumpHeight,
+                    m_AgentRb.position.z) + dirToGo;
+
+                MoveTowards(m_JumpTargetPos, m_AgentRb, m_WallJumpSettings.agentJumpVelocity, m_WallJumpSettings.agentJumpVelocityMaxChange);
+            }
+
+            if (!(jumpingTime > 0f) && !largeGrounded) {
+                m_AgentRb.AddForce(Vector3.down * fallingForce, ForceMode.Acceleration);
+            }
+
+            jumpingTime -= Time.fixedDeltaTime;
         }
 
         // Reset block somewhere within spawn area. 
@@ -119,6 +183,22 @@ namespace Examples {
                 RandomPosX, 0.45f, RandomPosZ);
 
             return randomSpawnPos;
+        }
+
+        /// <summary>
+        /// Move the Rb to a target position smoothly at some speed. 
+        /// </summary>
+        /// <param name="targetPos">Move to here.</param>
+        /// <param name="rb">Body to be moved.</param>
+        /// <param name="targetVel">Velocity</param>
+        /// <param name="maxVel"></param>
+        void MoveTowards(Vector3 targetPos, Rigidbody rb, float targetVel, float maxVel) {
+            var moveToPos = targetPos - rb.worldCenterOfMass;
+            var velocityTarget = Time.fixedDeltaTime * targetVel * moveToPos;
+
+            if (float.IsNaN(velocityTarget.x) == false) {
+                rb.velocity = Vector3.MoveTowards(rb.velocity, velocityTarget, maxVel);
+            }
         }
 
         /// <summary>
@@ -179,7 +259,7 @@ namespace Examples {
         /// </summary>
         /// <param name="smallCheck">What type of check to make</param>
         /// <returns>True if agent is on the ground, false otherwise.</returns>
-        bool DoGroundCHeck(bool smallCheck) {
+        bool DoGroundCheck(bool smallCheck) {
 
             if (!smallCheck) {
                 hitGroundColliders = new Collider[3];
@@ -220,7 +300,35 @@ namespace Examples {
                     return false;
                 }
             }
-            return true;
+        }
+
+        // Agent reached goal.
+        private void OnTriggerStay(Collider collider) {
+            if (collider.gameObject.CompareTag("goal") && DoGroundCheck(true)) {
+                SetReward(1f);
+                Done();
+                StartCoroutine(
+                    GoalScoredSwapGroundMaterial(m_WallJumpSettings.goalMetMaterial, 2));
+            }
+        }
+
+        /// <summary>
+        /// Chenges the color of the ground for a moment
+        /// </summary>
+        /// <returns>The Enumerator to be used in a Coroutine</returns>
+        /// <param name="mat">The material to be swaped.</param>
+        /// <param name="time">The time the material will remain.</param>
+        IEnumerator GoalScoredSwapGroundMaterial(Material mat, float time) {
+            m_GroundRenderer.material = mat;
+            yield return new WaitForSeconds(time); //wait for 2 sec
+            m_GroundRenderer.material = m_GroundMaterial;
+        }
+
+        void FixedUpdate() {
+            if (m_Configuration != -1) {
+                ConfigureAgent(m_Configuration);
+                m_Configuration = -1;
+            }
         }
     }
 }

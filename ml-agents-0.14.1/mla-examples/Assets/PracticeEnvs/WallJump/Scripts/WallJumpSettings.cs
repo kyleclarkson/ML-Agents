@@ -16,7 +16,7 @@ namespace Examples {
 
         [HideInInspector]
         public float agentJumpVelocity = 777;
-        []HideInInspector]
+        [HideInInspector]
         public float agentJumpVelocityMaxChange = 10;
     }
 }

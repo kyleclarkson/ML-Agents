@@ -201,7 +201,7 @@ GameObject:
   - component: {fileID: 5126965513445786842}
   m_Layer: 0
   m_Name: shortBlock
-  m_TagString: Untagged
+  m_TagString: block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -864,6 +864,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4798602d999b32442a26425b2d136421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  maxStep: 0
+  noWallBrain: {fileID: 0}
+  smallWallBrain: {fileID: 0}
+  bigWallBrain: {fileID: 0}
+  ground: {fileID: 6337554463698651916}
+  spawnArea: {fileID: 5138843183018330561}
+  goal: {fileID: 5626040482332851470}
+  shortBlock: {fileID: 3250928254637852691}
+  wall: {fileID: 5905505897455615505}
+  jumpingTime: 0
+  jumpTime: 0
+  fallingForce: 0
+  hitGroundColliders:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &6661152224151472974
 MonoBehaviour:
   m_ObjectHideFlags: 0

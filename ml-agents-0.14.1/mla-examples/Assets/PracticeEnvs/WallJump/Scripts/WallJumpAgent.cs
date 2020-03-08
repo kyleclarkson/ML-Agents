@@ -133,20 +133,27 @@ namespace Examples {
             // Applp actions to vector
             if (dirToGoForwardAction == 1)
                 dirToGo = (largeGrounded ? 1f : 0.5f) * 1f * transform.forward;
+
             else if (dirToGoForwardAction == 2)
                 dirToGo = (largeGrounded ? 1f : 0.5f) * -1f * transform.forward;
+
             if (rotateDirAction == 1)
                 rotateDir = transform.up * -1f;
+
             else if (rotateDirAction == 2)
                 rotateDir = transform.up * 1f;
+
             if (dirToGoSideAction == 1)
                 dirToGo = (largeGrounded ? 1f : 0.5f) * -0.6f * transform.right;
+
             else if (dirToGoSideAction == 2)
                 dirToGo = (largeGrounded ? 1f : 0.5f) * 0.6f * transform.right;
-            if (jumpAction == 1)
+
+            if (jumpAction == 1) {
                 if ((jumpingTime <= 0f) && smallGrounded) {
                     Jump();
                 }
+            }
 
             transform.Rotate(rotateDir, Time.fixedDeltaTime * 300f);
             m_AgentRb.AddForce(dirToGo * m_WallJumpSettings.agentRunSpeed, ForceMode.VelocityChange);

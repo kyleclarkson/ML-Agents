@@ -27,7 +27,11 @@ public class QueryAgent : Agent {
     }
 
     public override float[] Heuristic() {
-        return base.Heuristic();
+        ///
+
+        ///
+        var action = new float[4];
+
     }
 
     public override void InitializeAgent() {

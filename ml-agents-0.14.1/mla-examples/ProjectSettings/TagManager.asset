@@ -3,7 +3,31 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - target
+  - ground
+  - symbol_O
+  - stone
+  - pyramid
+  - agent
+  - ball
+  - iWall
+  - walkableSurface
+  - block
+  - goal
+  - wall
+  - pit
+  - symbol_O_Goal
+  - symbol_X
+  - symbol_X_Goal
+  - purpleAgent
+  - purpleGoal
+  - blueAgent
+  - blueGoal
+  - switchOff
+  - badFood
+  - food
+  - data_point
   layers:
   - Default
   - TransparentFX

@@ -65,7 +65,7 @@ public class QueryAgent : Agent {
                 break;
         }
 
-        // Apply movement and rotatio
+        // Apply movement and rotation.
         m_AgentRb.AddForce(dirToGo * moveSpeed, ForceMode.VelocityChange);
         transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
 
@@ -100,16 +100,16 @@ public class QueryAgent : Agent {
 
         // Get KB input.
         if (Input.GetKey(KeyCode.D)) {
-            action[2] = 2f;
-        }
-        if (Input.GetKey(KeyCode.W)) {
-            action[0] = 1f;
-        }
-        if (Input.GetKey(KeyCode.A)) {
             action[2] = 1f;
         }
-        if (Input.GetKey(KeyCode.S)) {
+        if (Input.GetKey(KeyCode.W)) {
             action[0] = 2f;
+        }
+        if (Input.GetKey(KeyCode.A)) {
+            action[2] = 2f;
+        }
+        if (Input.GetKey(KeyCode.S)) {
+            action[0] = 1f;
         }
         return action;
 
@@ -124,9 +124,9 @@ public class QueryAgent : Agent {
 
     private void OnTriggerEnter(Collider collision) {
         // Collision with data point
-        if (collision.gameObject.CompareTag("data_point")) {
-            Debug.Log("Collision with: " + collision.gameObject.name);
-
+        if (collision.gameObject.CompareTag("querypoint")) {
+            Debug.Log("Collision with querypoint " + collision.gameObject.name + 
+                ", id: " + collision.gameObject.GetInstanceID());
         }
     }
 }

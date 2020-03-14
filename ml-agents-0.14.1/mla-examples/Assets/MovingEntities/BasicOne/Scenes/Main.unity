@@ -148,6 +148,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -19.94
       objectReference: {fileID: 0}
+    - target: {fileID: 2542184126311724566, guid: 0f7e820e0fa14f34ca398d3c01192bc5,
+        type: 3}
+      propertyPath: periodUpperBound
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7230664724138380270, guid: 0f7e820e0fa14f34ca398d3c01192bc5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -352,6 +357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agents: []
+  listArea: []
 --- !u!4 &991433709
 Transform:
   m_ObjectHideFlags: 0

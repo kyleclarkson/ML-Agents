@@ -11,6 +11,13 @@ public class QueryPointArea : MonoBehaviour {
     // The data points in the scene.
     GameObject[] datapoints;
 
+    void Awake() {
+        // Get all data point in scene.
+        datapoints = GameObject.FindGameObjectsWithTag("datapoint");
+        
+       
+    }
+
     public void queryPoint(GameObject queriedPoint) {
 
     }

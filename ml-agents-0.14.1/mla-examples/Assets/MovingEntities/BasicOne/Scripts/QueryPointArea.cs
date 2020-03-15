@@ -5,21 +5,17 @@ using MLAgents;
 
 public class QueryPointArea : MonoBehaviour {
 
+    // Number of query points in scene.
+    public int numOfQueryPoints;
 
-    // List of Datapoints.
-    public int numOfDatapoints;
-    // The data points in the scene.
-    GameObject[] datapoints;
+    public GameObject[] queryPoints;
 
-    void Awake() {
-        // Get all data point in scene.
-        datapoints = GameObject.FindGameObjectsWithTag("datapoint");
-        
-       
+
+    public void ResetQueryArea() {
+        Debug.Log("QueryPointArea Start() called");
+
+        // Set up each data point
+        queryPoints = GameObject.FindGameObjectsWithTag("querypoint");
+        Debug.Log("Num of qps: " + queryPoints.Length);
     }
-
-    public void queryPoint(GameObject queriedPoint) {
-
-    }
-
 }

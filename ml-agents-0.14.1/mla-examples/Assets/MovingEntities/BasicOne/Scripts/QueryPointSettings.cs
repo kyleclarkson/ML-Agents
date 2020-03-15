@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using MLAgents;
 
 public class QueryPointSettings : MonoBehaviour {
 
@@ -9,15 +9,25 @@ public class QueryPointSettings : MonoBehaviour {
     [HideInInspector]
     public QueryPointArea[] listArea;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    public int totalScore;
+    public Text scoreText;
+
+    public void Awake() {
+        Debug.Log("Awake called");
+        Academy.Instance.OnEnvironmentReset += EnvironmentReset;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void EnvironmentReset() {
+        Debug.Log("Env reset");
+
+        // TODO clear previous object
+
+        // Set up areas
+        agents = GameObject.FindGameObjectsWithTag("agent");
+        listArea = FindObjectsOfType<QueryPointArea>();
+        Debug.Log("Areas: " + listArea.Length);
+        foreach (var qa in listArea) {
+            qa.ResetQueryArea();
+        }
     }
 }

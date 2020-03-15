@@ -16,19 +16,16 @@ public class QueryAgent : Agent {
 
 
     public override void InitializeAgent() {
-
-        Debug.Log("Init agent called");
         base.InitializeAgent();
 
         m_AgentRb = GetComponent<Rigidbody>();
         m_MyArea = area.GetComponent<QueryPointArea>();
         m_QueryPointSettings = FindObjectOfType<QueryPointSettings>();
+        
     }
 
 
     public override void AgentAction(float[] action) {
-
-        Debug.Log("agent action called");
         // Move agent.
         var dirToGo = Vector3.zero;
         var rotateDir = Vector3.zero;
@@ -94,8 +91,6 @@ public class QueryAgent : Agent {
     /// </summary>
     /// <returns></returns>
     public override float[] Heuristic() {
-
-        Debug.Log("heuristic called");
         var action = new float[3];
 
         // Get KB input.
@@ -127,6 +122,8 @@ public class QueryAgent : Agent {
         if (collision.gameObject.CompareTag("querypoint")) {
             Debug.Log("Collision with querypoint " + collision.gameObject.name + 
                 ", id: " + collision.gameObject.GetInstanceID());
+
+            collision.gameObject.GetComponent<QueryPoint>().pointQueried();
         }
     }
 }

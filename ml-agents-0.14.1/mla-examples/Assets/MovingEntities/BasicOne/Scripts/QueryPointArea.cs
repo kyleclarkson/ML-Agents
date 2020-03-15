@@ -7,16 +7,17 @@ public class QueryPointArea : MonoBehaviour {
 
     // Number of query points in scene.
     public int numOfQueryPoints;
-
-    //GameObject[] queryPoints;
+    [HideInInspector]
+    public GameObject[] queryPointsObjects;
     Dictionary<float, QueryPoint> queryPoints;
 
     public void ResetQueryArea() {
 
         queryPoints = new Dictionary<float, QueryPoint>();
+        queryPointsObjects = GameObject.FindGameObjectsWithTag("query_point");
 
         // Set up all datapoints
-        foreach (GameObject o in GameObject.FindGameObjectsWithTag("query_point")) {
+        foreach (GameObject o in queryPointsObjects) {
             float list_key = o.GetComponent<QueryPoint>().GetInstanceID();
             QueryPoint list_value = o.GetComponent<QueryPoint>();
             // Store in list.

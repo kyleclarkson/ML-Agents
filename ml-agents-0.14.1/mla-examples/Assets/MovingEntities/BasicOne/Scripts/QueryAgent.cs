@@ -12,7 +12,7 @@ public class QueryAgent : Agent {
 
     // Agent movement properties.
     public float turnSpeed = 300;
-    public float moveSpeed = 2;
+    public float moveSpeed = 3;
 
 
     public override void InitializeAgent() {
@@ -71,23 +71,58 @@ public class QueryAgent : Agent {
             m_AgentRb.velocity *= 0.95f;
         }
 
+        // Add reward
+        float totalPly = 0;
+        foreach(float ply in m_MyArea.getTimesSinceLastQueried()) {
+            totalPly += ply;
+        }
+        print("Total ply: " + totalPly);
+        AddReward(totalPly);
+
+        // Add small negative reward to move.
+        AddReward(-0.000001f);
+        
+
     }
 
     public override void AgentReset() {
         base.AgentReset();
     }
 
+    /// <summary>
+    /// (4*2) x and z location of each query point.
+    /// (1*2) Agent's x and x location.
+    /// (4*1) time since last queried of each query point.
+    /// Total: 16
+    /// </summary>
     public override void CollectObservations() {
         base.CollectObservations();
-        Debug.Log("Time last queried: " + string.Join(",", m_MyArea.getTimesSinceLastQueried()));
+        //Debug.Log("Time last queried: " + string.Join(",", m_MyArea.getTimesSinceLastQueried()));
+
+        // Get location of each datapoint. 
+        GameObject[] queryPoints = m_MyArea.queryPointsObjects;
+
+        foreach(GameObject qp in m_MyArea.queryPointsObjects) {
+            // Add location
+            AddVectorObs(qp.transform.position.x);
+            AddVectorObs(qp.transform.position.z);
+        }
+
+        AddVectorObs(m_AgentRb.transform.position.x);
+        AddVectorObs(m_AgentRb.transform.position.z);
+
+        var timesLastQuerried = m_MyArea.getTimesSinceLastQueried();
+        foreach (float timeLastQuerried in timesLastQuerried) {
+            AddVectorObs(timeLastQuerried);
+        }
+
     }
 
     /// <summary>
-    /// The 4 axis correspond to:
+    /// The 3 axis correspond to:
     /// 0 - Moving forward/backward
     /// 1 - Moving left/right
     /// 2 - Rotating
-    /// 3 - Shooting laser
     /// Player only has access to 0 and 2. 
     /// </summary>
     /// <returns></returns>
@@ -115,18 +150,17 @@ public class QueryAgent : Agent {
     // =========================
     // === End Agent methods ===
     // =========================
-    private void OnTrigger(Collision collision) {
-    }
-
     private void OnTriggerEnter(Collider collision) {
         // Collision with data point
         if (collision.gameObject.CompareTag("query_point")) {
             Debug.Log("Collision with querypoint " + collision.gameObject.name + 
-                ", id: " + collision.gameObject.GetInstanceID());
+              ", id: " + collision.gameObject.GetInstanceID());
 
             // Query point.
             collision.gameObject.GetComponent<QueryPoint>().pointQueried();
             m_MyArea.queryPoint(collision.gameObject.GetComponent<QueryPoint>().GetInstanceID());
+
+            AddReward(100f);
         }
     }
 }

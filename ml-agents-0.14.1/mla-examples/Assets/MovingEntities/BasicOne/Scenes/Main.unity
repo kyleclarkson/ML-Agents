@@ -366,6 +366,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numOfQueryPoints: 5
+  queryPointsObjects: []
 --- !u!1 &991433707
 GameObject:
   m_ObjectHideFlags: 0

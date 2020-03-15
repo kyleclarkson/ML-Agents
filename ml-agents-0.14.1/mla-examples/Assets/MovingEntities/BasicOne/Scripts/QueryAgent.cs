@@ -79,6 +79,7 @@ public class QueryAgent : Agent {
 
     public override void CollectObservations() {
         base.CollectObservations();
+        Debug.Log("Time last queried: " + string.Join(",", m_MyArea.getTimesSinceLastQueried()));
     }
 
     /// <summary>
@@ -119,11 +120,13 @@ public class QueryAgent : Agent {
 
     private void OnTriggerEnter(Collider collision) {
         // Collision with data point
-        if (collision.gameObject.CompareTag("querypoint")) {
+        if (collision.gameObject.CompareTag("query_point")) {
             Debug.Log("Collision with querypoint " + collision.gameObject.name + 
                 ", id: " + collision.gameObject.GetInstanceID());
 
+            // Query point.
             collision.gameObject.GetComponent<QueryPoint>().pointQueried();
+            m_MyArea.queryPoint(collision.gameObject.GetComponent<QueryPoint>().GetInstanceID());
         }
     }
 }

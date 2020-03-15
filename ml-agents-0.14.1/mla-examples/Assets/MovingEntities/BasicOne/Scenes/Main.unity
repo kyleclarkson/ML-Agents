@@ -146,7 +146,7 @@ PrefabInstance:
     - target: {fileID: 1372611667150047482, guid: 0f7e820e0fa14f34ca398d3c01192bc5,
         type: 3}
       propertyPath: queryPeroid
-      value: 15
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1876916814009830215, guid: 0f7e820e0fa14f34ca398d3c01192bc5,
         type: 3}
@@ -166,12 +166,12 @@ PrefabInstance:
     - target: {fileID: 2542184126311724566, guid: 0f7e820e0fa14f34ca398d3c01192bc5,
         type: 3}
       propertyPath: queryPeroid
-      value: 10
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6791848161193611805, guid: 0f7e820e0fa14f34ca398d3c01192bc5,
         type: 3}
       propertyPath: queryPeroid
-      value: 20
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7230664724138380270, guid: 0f7e820e0fa14f34ca398d3c01192bc5,
         type: 3}
@@ -347,6 +347,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &763467607 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8357552509633637438, guid: 0f7e820e0fa14f34ca398d3c01192bc5,
+    type: 3}
+  m_PrefabInstance: {fileID: 410252729}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &763467609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763467607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 533877a7e7a1a2843ac2cf3b0f64b10d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  numOfQueryPoints: 5
 --- !u!1 &991433707
 GameObject:
   m_ObjectHideFlags: 0

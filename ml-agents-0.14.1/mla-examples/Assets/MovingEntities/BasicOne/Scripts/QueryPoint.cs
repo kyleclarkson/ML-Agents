@@ -8,30 +8,23 @@ using UnityEngine;
 public class QueryPoint : MonoBehaviour {
 
     public QueryPointArea myArea;
+
     // Must be quired once within this frequencey.
     public int queryPeroid;
     [HideInInspector]
-    float timeLastQueried;
+    public float timeLastQueried;
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns>Difference between </returns>
-    public float pointQueried() {
-        float timeSinceLastQueired = Time.time - timeLastQueried;
-
-        return queryPeroid - timeSinceLastQueired;
-    }
-
-    
-    void Start(){
+    void Start() {
         // Create datapoint
         timeLastQueried = Time.time;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void pointQueried() {
+        timeLastQueried = Time.time;
+    }
+
+    public float ply() {
+        float timeSinceLastQueried = Time.time - timeLastQueried;
+        return queryPeroid - timeSinceLastQueried;
     }
 }

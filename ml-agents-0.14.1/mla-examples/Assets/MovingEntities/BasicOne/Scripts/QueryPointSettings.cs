@@ -26,8 +26,8 @@ public class QueryPointSettings : MonoBehaviour {
         agents = GameObject.FindGameObjectsWithTag("agent");
         listArea = FindObjectsOfType<QueryPointArea>();
         Debug.Log("Areas: " + listArea.Length);
-        foreach (var qa in listArea) {
-            qa.ResetQueryArea();
+        foreach (var queryArea in listArea) {
+            queryArea.ResetQueryArea();
         }
     }
 }

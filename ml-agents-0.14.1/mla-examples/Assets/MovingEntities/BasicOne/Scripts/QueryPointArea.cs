@@ -9,7 +9,8 @@ public class QueryPointArea : MonoBehaviour {
     public int numOfQueryPoints;
     [HideInInspector]
     public GameObject[] queryPointsObjects;
-    Dictionary<float, QueryPoint> queryPoints;
+    [HideInInspector]
+    public Dictionary<float, QueryPoint> queryPoints;
 
     public void ResetQueryArea() {
 
@@ -42,5 +43,17 @@ public class QueryPointArea : MonoBehaviour {
             send[i] = qps[i].ply();
         }
         return send;
+    }
+
+    /// <summary>
+    /// Return total ply of all points
+    /// </summary>
+    /// <returns></returns>
+    public float totalPly() {
+        float sum = 0;
+        foreach(float ply in getTimesSinceLastQueried()) {
+            sum += ply;
+        }
+        return sum;
     }
 }

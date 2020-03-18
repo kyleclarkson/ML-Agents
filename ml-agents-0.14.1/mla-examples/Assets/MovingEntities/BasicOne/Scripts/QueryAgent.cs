@@ -28,43 +28,12 @@ public class QueryAgent : Agent {
     public override void AgentAction(float[] action) {
         // Move agent.
         var dirToGo = Vector3.zero;
-        var rotateDir = Vector3.zero;
 
-        var forwardAxis = (int)action[0];
-        var rightAxis = (int)action[1];
-        var rotateAxis = (int)action[2];
-
-        switch (forwardAxis) {
-            case 1:
-                dirToGo = transform.forward;
-                break;
-            case 2:
-                dirToGo = -transform.forward;
-                break;
-        }
-
-        switch (rightAxis) {
-            case 1:
-                dirToGo = transform.right;
-                break;
-
-            case 2:
-                dirToGo = -transform.right;
-                break;
-        }
-
-        switch (rotateAxis) {
-            case 1:
-                rotateDir = transform.up;
-                break;
-            case 2:
-                rotateDir = -transform.up;
-                break;
-        }
+        dirToGo.x = action[0];
+        dirToGo.z = action[1];
 
         // Apply movement and rotation.
         m_AgentRb.AddForce(dirToGo * moveSpeed, ForceMode.VelocityChange);
-        transform.Rotate(rotateDir, Time.fixedDeltaTime * turnSpeed);
 
         // Slow down agent if moving too fase.
         if (m_AgentRb.velocity.sqrMagnitude > 20f) {
@@ -73,14 +42,21 @@ public class QueryAgent : Agent {
 
         // Add reward
         float totalPly = 0;
-        foreach(float ply in m_MyArea.getTimesSinceLastQueried()) {
-            totalPly += ply;
+        foreach(QueryPoint qp in m_MyArea.queryPoints.Values) {
+            if (qp.ply() < 0) {
+                AddReward(-1f);
+            }
         }
-        print("Total ply: " + totalPly);
-        AddReward(totalPly);
 
         // Add small negative reward to move.
-        AddReward(-0.000001f);
+        // AddReward(-0.000001f);
+
+        // End episode if ply becomes large.
+        //if(m_MyArea.totalPly() < -120) {
+        //    Done();
+        //}
+
+        Debug.Log("Total ply: " + m_MyArea.totalPly());
         
 
     }
@@ -119,29 +95,15 @@ public class QueryAgent : Agent {
     }
 
     /// <summary>
-    /// The 3 axis correspond to:
+    /// The 2 axis correspond to:
     /// 0 - Moving forward/backward
     /// 1 - Moving left/right
-    /// 2 - Rotating
-    /// Player only has access to 0 and 2. 
     /// </summary>
     /// <returns></returns>
     public override float[] Heuristic() {
         var action = new float[3];
-
-        // Get KB input.
-        if (Input.GetKey(KeyCode.D)) {
-            action[2] = 1f;
-        }
-        if (Input.GetKey(KeyCode.W)) {
-            action[0] = 2f;
-        }
-        if (Input.GetKey(KeyCode.A)) {
-            action[2] = 2f;
-        }
-        if (Input.GetKey(KeyCode.S)) {
-            action[0] = 1f;
-        }
+        action[0] = Input.GetAxis("Horizontal");
+        action[1] = Input.GetAxis("Vertical");
         return action;
 
     }
@@ -156,11 +118,15 @@ public class QueryAgent : Agent {
             Debug.Log("Collision with querypoint " + collision.gameObject.name + 
               ", id: " + collision.gameObject.GetInstanceID());
 
-            // Query point.
-            collision.gameObject.GetComponent<QueryPoint>().pointQueried();
-            m_MyArea.queryPoint(collision.gameObject.GetComponent<QueryPoint>().GetInstanceID());
+            // The point that was querried.
+            QueryPoint qp = collision.gameObject.GetComponent<QueryPoint>();
 
-            AddReward(100f);
+
+            // Compute reward
+            AddReward(Time.time - qp.timeLastQueried);
+            // Query point - set LTQ to now.
+            m_MyArea.queryPoint(collision.gameObject.GetComponent<QueryPoint>().GetInstanceID());
+            
         }
     }
 }

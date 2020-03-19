@@ -10,27 +10,25 @@ public class QueryAgent : Agent {
     QueryPointArea m_MyArea;
     QueryPointSettings m_QueryPointSettings;
 
+    public bool useVectorObs;
+
     // Agent movement properties.
     public float turnSpeed = 300;
     public float moveSpeed = 3;
 
 
-    public override void InitializeAgent() {
-        base.InitializeAgent();
-
+    public override void InitializeAgent() { 
         m_AgentRb = GetComponent<Rigidbody>();
         m_MyArea = area.GetComponent<QueryPointArea>();
         m_QueryPointSettings = FindObjectOfType<QueryPointSettings>();
-        
     }
 
 
     public override void AgentAction(float[] action) {
-        // Move agent.
-        var dirToGo = Vector3.zero;
 
-        dirToGo.x = action[0];
-        dirToGo.z = action[1];
+        var dirToGo = Vector3.zero;
+        dirToGo.x = -action[0];
+        dirToGo.z = -action[1];
 
         // Apply movement and rotation.
         m_AgentRb.AddForce(dirToGo * moveSpeed, ForceMode.VelocityChange);
@@ -40,25 +38,23 @@ public class QueryAgent : Agent {
             m_AgentRb.velocity *= 0.95f;
         }
 
-        // Add reward
-        float totalPly = 0;
-        foreach(QueryPoint qp in m_MyArea.queryPoints.Values) {
-            if (qp.ply() < 0) {
-                AddReward(-1f);
-            }
-        }
+        float[] plys = m_MyArea.getPlys();
 
+        //foreach (float ply in plys) {
+        //    if (ply < 0) {
+        //        AddReward(-1f);
+        //    }
+        //}
+
+
+        float movementPen = Random.Range(-0.001f, -0.0001f);
         // Add small negative reward to move.
-        // AddReward(-0.000001f);
+        AddReward(movementPen);
 
         // End episode if ply becomes large.
         //if(m_MyArea.totalPly() < -120) {
         //    Done();
         //}
-
-        Debug.Log("Total ply: " + m_MyArea.totalPly());
-        
-
     }
 
     public override void AgentReset() {
@@ -66,32 +62,36 @@ public class QueryAgent : Agent {
     }
 
     /// <summary>
-    /// (4*2) x and z location of each query point.
-    /// (1*2) Agent's x and x location.
+    /// (4*3) Distance between agent and query point.
+    /// (1*3) Location of target.
     /// (4*1) time since last queried of each query point.
-    /// Total: 16
+    /// Total: 19
     /// </summary>
     public override void CollectObservations() {
-        base.CollectObservations();
-        //Debug.Log("Time last queried: " + string.Join(",", m_MyArea.getTimesSinceLastQueried()));
-
-        // Get location of each datapoint. 
         GameObject[] queryPoints = m_MyArea.queryPointsObjects;
 
-        foreach(GameObject qp in m_MyArea.queryPointsObjects) {
+        // Add position of each query point.
+        foreach (GameObject qp in m_MyArea.queryPointsObjects) {
             // Add location
-            AddVectorObs(qp.transform.position.x);
-            AddVectorObs(qp.transform.position.z);
+            //AddVectorObs(transform.InverseTransformDirection(qp.transform.position).x);
+            //AddVectorObs(transform.InverseTransformDirection(qp.transform.position).z);
+            //AddVectorObs((qp.transform.position).x);
+            //AddVectorObs((qp.transform.position).z);
+            AddVectorObs(qp.transform.position - transform.position);
+
         }
 
-        AddVectorObs(m_AgentRb.transform.position.x);
-        AddVectorObs(m_AgentRb.transform.position.z);
+        // Add position of agent.
+        //AddVectorObs(transform.InverseTransformDirection(m_AgentRb.transform.position).x);
+        //AddVectorObs(transform.InverseTransformDirection(m_AgentRb.transform.position).z);
 
-        var timesLastQuerried = m_MyArea.getTimesSinceLastQueried();
-        foreach (float timeLastQuerried in timesLastQuerried) {
-            AddVectorObs(timeLastQuerried);
+        AddVectorObs(transform.position);
+
+        // Add time last querried of each query point.
+        float[] plys = m_MyArea.getPlys();
+        foreach (float ply in plys) {
+            AddVectorObs(ply);
         }
-
     }
 
     /// <summary>
@@ -101,7 +101,7 @@ public class QueryAgent : Agent {
     /// </summary>
     /// <returns></returns>
     public override float[] Heuristic() {
-        var action = new float[3];
+        var action = new float[2];
         action[0] = Input.GetAxis("Horizontal");
         action[1] = Input.GetAxis("Vertical");
         return action;
@@ -123,6 +123,7 @@ public class QueryAgent : Agent {
 
 
             // Compute reward
+            Debug.Log("Reward: " + (Time.time - qp.timeLastQueried));
             AddReward(Time.time - qp.timeLastQueried);
             // Query point - set LTQ to now.
             m_MyArea.queryPoint(collision.gameObject.GetComponent<QueryPoint>().GetInstanceID());

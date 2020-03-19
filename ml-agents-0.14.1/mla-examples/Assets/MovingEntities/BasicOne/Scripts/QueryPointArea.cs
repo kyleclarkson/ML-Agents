@@ -36,7 +36,7 @@ public class QueryPointArea : MonoBehaviour {
     /// Return time since last data point was queired. 
     /// </summary>
     /// <returns></returns>
-    public float[] getTimesSinceLastQueried() {
+    public float[] getPlys() {
         float[] send = new float[numOfQueryPoints];
         QueryPoint[] qps = (new List<QueryPoint>(queryPoints.Values)).ToArray();
         for (int i=0; i<numOfQueryPoints; i++) {
@@ -51,7 +51,7 @@ public class QueryPointArea : MonoBehaviour {
     /// <returns></returns>
     public float totalPly() {
         float sum = 0;
-        foreach(float ply in getTimesSinceLastQueried()) {
+        foreach(float ply in getPlys()) {
             sum += ply;
         }
         return sum;

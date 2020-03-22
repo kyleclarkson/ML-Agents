@@ -24,48 +24,60 @@ public class QueryAgent : Agent {
     }
 
 
-    public override void AgentAction(float[] action) {
+    public override void AgentReset() {
+        if (m_AgentRb.transform.position.y < 0) {
+            this.transform.position = new Vector3(0, 3f, 0);
+            this.m_AgentRb.velocity = Vector3.zero;
+        }
+    }
 
-        var dirToGo = Vector3.zero;
-        dirToGo.x = -action[0];
-        dirToGo.z = -action[1];
+
+    public override void AgentAction(float[] vectorAction) {
+
+        Vector3 moveDir = Vector3.zero;
+        Vector3 rotateDir = Vector3.zero;
+
+        var action = Mathf.FloorToInt(vectorAction[0]);
 
         // Apply movement and rotation.
-        m_AgentRb.AddForce(dirToGo * moveSpeed, ForceMode.VelocityChange);
-
-        // Slow down agent if moving too fase.
-        if (m_AgentRb.velocity.sqrMagnitude > 20f) {
-            m_AgentRb.velocity *= 0.95f;
+        switch (action) {
+            case 1:
+                moveDir = transform.forward * 1f;
+                break;
+            case 2:
+                moveDir = transform.forward * -1f;
+                break;
+            case 3:
+                rotateDir = transform.up * 1f;
+                break;
+            case 4:
+                rotateDir = transform.up * -1f;
+                break;
         }
+        transform.Rotate(rotateDir, Time.deltaTime * 200f);
+        m_AgentRb.AddForce(moveDir * 2f, ForceMode.VelocityChange);
 
         float[] plys = m_MyArea.getPlys();
-
-        //foreach (float ply in plys) {
-        //    if (ply < 0) {
-        //        AddReward(-1f);
-        //    }
-        //}
+        
+        // Agent has fallen off
+        if (m_AgentRb.transform.position.y < 0) {
+            SetReward(-1f);
+            Done();
+        }
 
 
         float movementPen = Random.Range(-0.001f, -0.0001f);
         // Add small negative reward to move.
         AddReward(movementPen);
-
-        // End episode if ply becomes large.
-        //if(m_MyArea.totalPly() < -120) {
-        //    Done();
-        //}
-    }
-
-    public override void AgentReset() {
-        base.AgentReset();
+        
     }
 
     /// <summary>
     /// (4*3) Distance between agent and query point.
-    /// (1*3) Location of target.
+    /// (1*3) Location of agent.
+    /// (1*3) Velocity of agent
     /// (4*1) time since last queried of each query point.
-    /// Total: 19
+    /// Total: 22
     /// </summary>
     public override void CollectObservations() {
         GameObject[] queryPoints = m_MyArea.queryPointsObjects;
@@ -84,8 +96,11 @@ public class QueryAgent : Agent {
         // Add position of agent.
         //AddVectorObs(transform.InverseTransformDirection(m_AgentRb.transform.position).x);
         //AddVectorObs(transform.InverseTransformDirection(m_AgentRb.transform.position).z);
+        // Position of agent
+        AddVectorObs(m_AgentRb.position);
 
-        AddVectorObs(transform.position);
+        // Velocity of agent
+        AddVectorObs(m_AgentRb.velocity);
 
         // Add time last querried of each query point.
         float[] plys = m_MyArea.getPlys();
@@ -95,17 +110,26 @@ public class QueryAgent : Agent {
     }
 
     /// <summary>
-    /// The 2 axis correspond to:
-    /// 0 - Moving forward/backward
-    /// 1 - Moving left/right
+    /// The 1 axis correspond to:
+    /// 0 - Do nothing. 
+    /// 1/2 - Moving forward/backward
+    /// 3/4 - Rotating left/right
     /// </summary>
     /// <returns></returns>
     public override float[] Heuristic() {
-        var action = new float[2];
-        action[0] = Input.GetAxis("Horizontal");
-        action[1] = Input.GetAxis("Vertical");
-        return action;
-
+        if (Input.GetKey(KeyCode.D)) {
+            return new float[] { 3 };
+        }
+        if (Input.GetKey(KeyCode.W)) {
+            return new float[] { 1 };
+        }
+        if (Input.GetKey(KeyCode.A)) {
+            return new float[] { 4 };
+        }
+        if (Input.GetKey(KeyCode.S)) {
+            return new float[] { 2 };
+        }
+        return new float[] { 0 };
     }
 
 
@@ -120,7 +144,6 @@ public class QueryAgent : Agent {
 
             // The point that was querried.
             QueryPoint qp = collision.gameObject.GetComponent<QueryPoint>();
-
 
             // Compute reward
             Debug.Log("Reward: " + (Time.time - qp.timeLastQueried));

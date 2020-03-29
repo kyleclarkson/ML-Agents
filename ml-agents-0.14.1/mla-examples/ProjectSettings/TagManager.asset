@@ -29,6 +29,7 @@ TagManager:
   - food
   - data_point
   - querypoint
+  - query_point
   layers:
   - Default
   - TransparentFX

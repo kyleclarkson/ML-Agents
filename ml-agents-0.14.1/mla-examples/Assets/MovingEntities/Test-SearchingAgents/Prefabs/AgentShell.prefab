@@ -145,15 +145,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    vectorObservationSize: 1
-    numStackedVectorObservations: 1
-    vectorActionSize: 01000000
+    vectorObservationSize: 9
+    numStackedVectorObservations: 3
+    vectorActionSize: 05000000
     vectorActionDescriptions: []
     vectorActionSpaceType: 0
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: SearchingBrain
+  m_BehaviorName: SearcherLearning
   m_TeamID: 0
   m_UseChildSensors: 1
 --- !u!114 &4054491188578475592

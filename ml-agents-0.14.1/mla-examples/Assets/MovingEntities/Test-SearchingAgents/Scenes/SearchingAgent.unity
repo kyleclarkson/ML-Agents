@@ -198,7 +198,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 46549118}
   m_LocalRotation: {x: 0.7071068, y: 0.000000059604645, z: -0.000000018626451, w: 0.70710677}
-  m_LocalPosition: {x: 1.6280086, y: 112.79072, z: -112.92996}
+  m_LocalPosition: {x: 5.8308105, y: 105.20953, z: 5.1777086}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -336,7 +336,7 @@ PrefabInstance:
     - target: {fileID: 3620962365214223685, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -111
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3620962365214223685, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
         type: 3}
@@ -416,7 +416,7 @@ PrefabInstance:
     - target: {fileID: 7124235552204795414, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
         type: 3}
       propertyPath: m_BehaviorName
-      value: SearcherBrain
+      value: SearcherLearning
       objectReference: {fileID: 0}
     - target: {fileID: 7124235552204795414, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
         type: 3}

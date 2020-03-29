@@ -11,7 +11,7 @@ public class SearchingAgent : Agent
     GameObject[] targets;
 
     // The position of the agent when the target was assigned to it. 
-    Vector3 dstPrevious;
+    Vector3 posTargetAssigned;
 
     public float maxSpeed;
     public float agentSpeed;
@@ -22,7 +22,6 @@ public class SearchingAgent : Agent
         Debug.Log("Targets found: " + targets.Length);
         // Set random target point.
         SetNewTarget();
-        dstPrevious = m_Rb.transform.position - currentTarget.transform.position;
     }
 
     public override float[] Heuristic() {
@@ -49,18 +48,18 @@ public class SearchingAgent : Agent
         AddVectorObs(m_Rb.transform.position);
 
         // Velocity of agent
-        AddVectorObs(m_Rb.velocity);
+        AddVectorObs(transform.InverseTransformDirection(m_Rb.velocity));
     }
     
     public override void AgentAction(float[] vectorAction) {
 
-        if (m_Rb.transform.position.y < 0) {
-            SetReward(-1f);
-            m_Rb.position = new Vector3(0, 1f, 0);
-            m_Rb.velocity = Vector3.zero;
-            m_Rb.angularVelocity = Vector3.zero;
-            SetNewTarget();
-        }
+        //if (m_Rb.transform.position.y < 0) {
+        //    SetReward(-1f);
+        //    m_Rb.position = new Vector3(0, 1f, 0);
+        //    m_Rb.velocity = Vector3.zero;
+        //    m_Rb.angularVelocity = Vector3.zero;
+        //    SetNewTarget();
+        //}
 
         // Move agent.
         var directionToMove = Vector3.zero;
@@ -92,27 +91,35 @@ public class SearchingAgent : Agent
         //}
 
         // Distance to target reward
-        Vector3 dstToTarget = (m_Rb.position - currentTarget.transform.position);
-        float dstReward = dstToTarget.magnitude / dstPrevious.magnitude;
-        
-        AddReward(-dstReward);
+        Vector3 currentDstToTarget = (m_Rb.position - currentTarget.transform.position);
+        Vector3 assignedDstToTarget = (posTargetAssigned - currentTarget.transform.position);
+        float dstReward = currentDstToTarget.magnitude / assignedDstToTarget.magnitude;
+
+        AddReward(-dstReward / maxStep);
 
         // Not done reward
-        // AddReward(-0.0001f);
+        //AddReward(-1f / maxStep);
     }
 
     public override void AgentReset() {
-        
+        Debug.Log("Agent reset called");
+        m_Rb.velocity = Vector3.zero;
+        m_Rb.angularVelocity = Vector3.zero;
+
+        m_Rb.transform.position = new Vector3(0, 2f, 0);
+        SetNewTarget();
+    }
+
+    private void Update() {
     }
 
     private void OnTriggerEnter(Collider collision) {
         if (collision.gameObject.CompareTag("target") || collision.gameObject.CompareTag("data_point")) {
-            Debug.Log("Collision with : " + collision.gameObject.name);
+            //Debug.Log("Collision with : " + collision.gameObject.name);
 
             if (collision.gameObject.Equals(currentTarget)) {
                 Debug.Log("Target found!");
-                SetReward(10f);
-                SetNewTarget();
+                AddReward(100f);
                 Done();
             }
         }
@@ -142,8 +149,8 @@ public class SearchingAgent : Agent
             currentTarget.tag = "target";
         }
 
-        // Set dst to target from current position.
-        dstPrevious = m_Rb.transform.position - currentTarget.transform.position;
+        // position of agent when assigned target.
+        posTargetAssigned = m_Rb.transform.position;
 
 
     }

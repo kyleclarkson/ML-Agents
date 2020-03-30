@@ -383,6 +383,16 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3675648752522425724, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 3675648752522425724, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4.43
+      objectReference: {fileID: 0}
     - target: {fileID: 4739617247392464675, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
         type: 3}
       propertyPath: m_Name
@@ -406,7 +416,7 @@ PrefabInstance:
     - target: {fileID: 5472806867736049261, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7124235552204795414, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
         type: 3}
@@ -453,6 +463,12 @@ PrefabInstance:
       propertyPath: m_BrainParameters.vectorActionSize.Array.data[0]
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 7124235552204795414, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 96b9691c9ac62374e8a673faadfa63cc,
+        type: 3}
     - target: {fileID: 8028351528613416883, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
         type: 3}
       propertyPath: agentSpeed
@@ -462,6 +478,26 @@ PrefabInstance:
         type: 3}
       propertyPath: maxStep
       value: 5000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8774377416945129499, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
+        type: 3}
+      propertyPath: useWorldPositions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8774377416945129499, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
+        type: 3}
+      propertyPath: rayHitColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8774377416945129499, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
+        type: 3}
+      propertyPath: rayHitColor.g
+      value: 0.0141509175
+      objectReference: {fileID: 0}
+    - target: {fileID: 8774377416945129499, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
+        type: 3}
+      propertyPath: rayHitColor.b
+      value: 0.0141509175
       objectReference: {fileID: 0}
     - target: {fileID: 9211106212236247386, guid: 0b55711c0192ffc4297f059ef1e5ff7c,
         type: 3}

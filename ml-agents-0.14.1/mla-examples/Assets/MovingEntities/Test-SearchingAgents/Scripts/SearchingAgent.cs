@@ -25,19 +25,33 @@ public class SearchingAgent : Agent
     }
 
     public override float[] Heuristic() {
+        //if (Input.GetKey(KeyCode.D)) {
+        //    return new float[] { 3 };
+        //}
+        //if (Input.GetKey(KeyCode.W)) {
+        //    return new float[] { 1 };
+        //}
+        //if (Input.GetKey(KeyCode.A)) {
+        //    return new float[] { 4 };
+        //}
+        //if (Input.GetKey(KeyCode.S)) {
+        //    return new float[] { 2 };
+        //}
+        //return new float[] { 0 };
+        var action = new float[3];
         if (Input.GetKey(KeyCode.D)) {
-            return new float[] { 3 };
+            action[2] = 2f;
         }
         if (Input.GetKey(KeyCode.W)) {
-            return new float[] { 1 };
+            action[0] = 1f;
         }
         if (Input.GetKey(KeyCode.A)) {
-            return new float[] { 4 };
+            action[2] = 1f;
         }
         if (Input.GetKey(KeyCode.S)) {
-            return new float[] { 2 };
+            action[0] = 2f;
         }
-        return new float[] { 0 };
+        return action;
     }
 
     // Note: Raycasts are automatically added to observations. 
@@ -65,20 +79,34 @@ public class SearchingAgent : Agent
         var directionToMove = Vector3.zero;
         var directionToRotate = Vector3.zero;
 
-        var action = Mathf.FloorToInt(vectorAction[0]);
+        var forwardAxis = (int)vectorAction[0];
+        var rightAxis = (int)vectorAction[1];
+        var rotateAxis = (int)vectorAction[2];
 
-        switch (action) {
+        switch (forwardAxis) {
             case 1:
-                directionToMove = transform.forward * 1f;
+                directionToMove = transform.forward;
                 break;
             case 2:
-                directionToMove = transform.forward * -1f;
+                directionToMove = -transform.forward;
                 break;
-            case 3:
-                directionToRotate = transform.up * 1f;
+        }
+
+        switch (rightAxis) {
+            case 1:
+                directionToMove = transform.right;
                 break;
-            case 4:
-                directionToRotate = transform.up * -1f;
+            case 2:
+                directionToMove = -transform.right;
+                break;
+        }
+
+        switch (rotateAxis) {
+            case 1:
+                directionToRotate = -transform.up;
+                break;
+            case 2:
+                directionToRotate = transform.up;
                 break;
         }
 

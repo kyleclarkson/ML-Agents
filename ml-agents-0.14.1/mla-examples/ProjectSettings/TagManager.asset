@@ -30,6 +30,7 @@ TagManager:
   - data_point
   - querypoint
   - query_point
+  - querier
   layers:
   - Default
   - TransparentFX

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8378695521862252452}
   - component: {fileID: 309772679823736450}
   - component: {fileID: 1646272765155728165}
+  - component: {fileID: 5130180127896027806}
   m_Layer: 0
   m_Name: DataPoint
   m_TagString: data_point
@@ -28,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 3203563572383517287}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 34.8, y: 0.00000011920929, z: 35.6}
-  m_LocalScale: {x: 4.41545, y: 4.41545, z: 4.41545}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -93,3 +94,20 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5130180127896027806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3203563572383517287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 501fab22b776c9c40a00c1127b171258, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  queryPeriod: 0
+  timeLastQueried: 0
+  timeSinceLastQueried: 0
+  isFrozen: 0
+  timeFrozenAt: 0

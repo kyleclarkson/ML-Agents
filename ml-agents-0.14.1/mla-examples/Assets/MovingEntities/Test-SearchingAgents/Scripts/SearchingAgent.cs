@@ -6,7 +6,7 @@ using MLAgents;
 public class SearchingAgent : Agent
 {
     Rigidbody m_Rb;
-    GameObject currentTarget;
+    public GameObject currentTarget;
 
     GameObject[] targets;
 
@@ -125,6 +125,10 @@ public class SearchingAgent : Agent
 
         AddReward(-dstReward / maxStep);
 
+        if (currentTarget != null) {
+            Debug.DrawLine(transform.position, currentTarget.transform.position, Color.green);
+        }
+
         // Not done reward
         //AddReward(-1f / maxStep);
     }
@@ -137,9 +141,7 @@ public class SearchingAgent : Agent
         m_Rb.transform.position = new Vector3(0, 2f, 0);
         SetNewTarget();
     }
-
-    private void Update() {
-    }
+    
 
     private void OnTriggerEnter(Collider collision) {
         if (collision.gameObject.CompareTag("target") || collision.gameObject.CompareTag("data_point")) {

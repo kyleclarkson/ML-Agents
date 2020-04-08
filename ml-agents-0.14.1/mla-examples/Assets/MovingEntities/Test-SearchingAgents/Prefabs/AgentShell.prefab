@@ -147,7 +147,7 @@ MonoBehaviour:
   m_BrainParameters:
     vectorObservationSize: 9
     numStackedVectorObservations: 3
-    vectorActionSize: 05000000
+    vectorActionSize: 020000000200000002000000
     vectorActionDescriptions: []
     vectorActionSpaceType: 0
   m_Model: {fileID: 0}

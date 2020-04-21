@@ -3,7 +3,24 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - ball
+  - purpleAgent
+  - blueAgent
+  - purpleGoal
+  - blueGoal
+  - wall
+  - agent
+  - symbol_X
+  - symbol_O
+  - goal
+  - pit
+  - target
+  - ground
+  - block
+  - food
+  - badFood
+  - frozenAgent
   layers:
   - Default
   - TransparentFX

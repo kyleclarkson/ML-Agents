@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Redone {
+
     public class GoalDetect : MonoBehaviour {
-        // Start is called before the first frame update
-        void Start() {
 
-        }
+        // Set by agent script on initialization.
+        [HideInInspector]
+        public PushAgentBasic agent;
 
-        // Update is called once per frame
-        void Update() {
-
+        private void OnCollisionEnter(Collision collision) {
+            
+            if (collision.gameObject.CompareTag("goal")) {
+                agent.ScoredAGoal();
+            }
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Redone {
         public bool useVectorObs;
 
         // Get PushBlockSettings from Scene object.
-        void Start() {
+        void Awake() {
             m_PushBlockSettings = FindObjectOfType<Redone.PushBlockSettings>();
             if (!m_PushBlockSettings) {
                 Debug.Log("Not found");
@@ -92,13 +92,19 @@ namespace Redone {
         }
 
         public override void OnEpisodeBegin() {
-            // Reset 
+            // Rotate area (changes location of goal)
             var rotation = Random.Range(0, 4);
             var rotationAngle = rotation * 90f;
             area.transform.Rotate(new Vector3(0, rotationAngle, 0f));
 
+            // Reset block's pos
+            ResetBlock();
+            // Reset agent's pos.
+            transform.position = GetRandomSpawnPos();
+            m_AgentRb.angularVelocity = Vector3.zero;
+            m_AgentRb.velocity = Vector3.zero;
 
-
+            SetResetParameters();
         }
 
         public void MoveAgent(float[] act) {
@@ -133,13 +139,52 @@ namespace Redone {
             m_AgentRb.AddForce(dirToGo * m_PushBlockSettings.agentRunSpeed,
                 ForceMode.VelocityChange);
         }
+        
+        IEnumerator GoalScoredSwapGroundMaterial(Material mat, float time=2) {
+            m_GroundRenderer.material = mat;
+            // Wait for time amount
+            yield return new WaitForSeconds(time);
+            m_GroundRenderer.material = m_GroundMaterial;
+        }
 
         public void ScoredAGoal() {
-            // TODO
+            AddReward(5f);
+            // End Episode
+            EndEpisode();
+
+            // Swap ground material which waits for 2 seconds
+            StartCoroutine(GoalScoredSwapGroundMaterial
+                (m_PushBlockSettings.goalScoredMaterial, 2));
         }
 
         public void ResetBlock() {
-            // TODO
+            block.transform.position = GetRandomSpawnPos();
+            m_BlockRb.velocity = Vector3.zero;
+            m_BlockRb.angularVelocity = Vector3.zero;
+        }
+
+        // Generate random position within spawning area.
+        public Vector3 GetRandomSpawnPos() {
+            var foundNewSpawnLocation = false;
+            var randomSpawnPos = Vector3.zero;
+
+            while (foundNewSpawnLocation == false) {
+                // Get position along coordinate axes
+                float xPos = Random.Range(
+                    -areaBounds.extents.x * m_PushBlockSettings.spawnAreaMarginMultiplier,
+                    areaBounds.extents.x * m_PushBlockSettings.spawnAreaMarginMultiplier);
+
+                float zPos = Random.Range(
+                    -areaBounds.extents.z * m_PushBlockSettings.spawnAreaMarginMultiplier,
+                    areaBounds.extents.z * m_PushBlockSettings.spawnAreaMarginMultiplier);
+
+                randomSpawnPos = ground.transform.position + new Vector3(xPos, 1f, zPos);
+                // Check if SpawnPos is clear within 2.5m in x-z directions. 
+                if (Physics.CheckBox(randomSpawnPos, new Vector3(2.5f, 0.01f, 2.5f)) == false) {
+                    foundNewSpawnLocation = true;
+                }
+            }
+            return randomSpawnPos;
         }
 
         public void SetResetParameters() {

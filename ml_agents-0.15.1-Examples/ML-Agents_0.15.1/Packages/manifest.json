@@ -2,6 +2,7 @@
   "dependencies": {
     "com.unity.ads": "2.0.8",
     "com.unity.analytics": "3.3.2",
+    "com.unity.cinemachine": "2.5.0",
     "com.unity.collab-proxy": "1.2.16",
     "com.unity.ml-agents": "file:C:/Users/Kyle/Documents/GitHub/ML-Agents/ml-agents-0.15.1/com.unity.ml-agents",
     "com.unity.package-manager-ui": "2.1.2",

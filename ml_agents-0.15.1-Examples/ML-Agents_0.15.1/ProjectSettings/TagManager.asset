@@ -21,6 +21,7 @@ TagManager:
   - food
   - badFood
   - frozenAgent
+  - trash
   layers:
   - Default
   - TransparentFX
